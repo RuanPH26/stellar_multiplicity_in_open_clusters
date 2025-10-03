@@ -23,6 +23,7 @@ font_cb = {'family': 'serif', 'color':  'black', 'weight': 'normal','size': 12}
 
 def bin_frac(data, q=0):
     binaries = len(data[data['q']>q])
+    
     return binaries/len(data)
 
 def n_members(data):
@@ -136,6 +137,13 @@ def relaxation_time(df):
     aux['e_t_relax'] = unp.std_devs(t_relax)
 
     return aux
+
+def stellar_density(data):
+    r = data['rh']
+    V = (4/3)*np.pi*r**3
+    n_stars = data['n_members']
+    return n_stars/V
+    
 
 
     

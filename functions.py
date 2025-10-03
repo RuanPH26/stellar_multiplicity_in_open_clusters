@@ -25,7 +25,21 @@ def bin_frac(data):
     binaries = len(data[data['q']>0])
     return binaries/len(data)
 
-def relaxation_time(data):
+def relaxation_time(df):
+    """
+    t_relax = (8.9*10**5*(N*rh**3)**0.5)/(m**0.5*log(0.4*N))
+    N = number of members
+    m = mean stellar mass
+    rh =  half-mass radius
+    
+    """
+    cte = 8.9*10**5
+    rh = df['rh']
+    N = df['n_members']
+    m = df['mass_total']/N
+    
+    t_relax = (cte*(N*rh**3)**0.5)/(np.log10(0.4*N)*m**0.5)
+    
     
     return
 

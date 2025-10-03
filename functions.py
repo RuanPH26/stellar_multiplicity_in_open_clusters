@@ -21,8 +21,8 @@ font_cb = {'family': 'serif', 'color':  'black', 'weight': 'normal','size': 12}
 
 #___________________________________________________________________________________________________-
 
-def bin_frac(data):
-    binaries = len(data[data['q']>0])
+def bin_frac(data, q=0):
+    binaries = len(data[data['q']>q])
     return binaries/len(data)
 
 def n_members(data):
@@ -136,5 +136,7 @@ def relaxation_time(df):
     aux['e_t_relax'] = unp.std_devs(t_relax)
 
     return aux
+
+
     
     

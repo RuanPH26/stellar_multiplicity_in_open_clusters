@@ -25,23 +25,8 @@ def bin_frac(data):
     binaries = len(data[data['q']>0])
     return binaries/len(data)
 
-def relaxation_time(df):
-    """
-    t_relax = (8.9*10**5*(N*rh**3)**0.5)/(m**0.5*log(0.4*N))
-    N = number of members
-    m = mean stellar mass
-    rh =  half-mass radius
-    
-    """
-    cte = 8.9*10**5
-    rh = df['rh']
-    N = df['n_members']
-    m = df['mass_total']/N
-    
-    t_relax = (cte*(N*rh**3)**0.5)/(np.log10(0.4*N)*m**0.5)
-    
-    
-    return
+def n_members(data):
+    return len(data) + len(data[data['comp_mass']>0])
 
 def half_mass_ratio(data):
     
@@ -66,7 +51,7 @@ def half_mass_ratio(data):
     #Calcula a massa do sistema já propagando o erro associado
     mass_system = unp.uarray(aux['mass'], aux['er_mass'])+unp.uarray(aux['comp_mass'], aux['er_comp_mass'])
     aux['mass_system'] = unp.nominal_values(mass_system)
-    aux['er_mass_system'] = unp.std_devs(mass_system)
+    aux['e_mass_system'] = unp.std_devs(mass_system)
     
     total_mass =aux['mass_system'].sum()
     
@@ -91,7 +76,7 @@ def get_rh(sample):
     _, rh = half_mass_ratio(sample)
     return rh
 
-def bootstrap_rh(data, n_resamples=5000, ci=95, random_state=None, verbose=True):
+def bootstrap_rh(data, n_resamples=5000, ci=95, random_state=None, verbose=False):
     rng = np.random.default_rng(seed=random_state)
     n = len(data)
     rh_samples = []
@@ -119,17 +104,37 @@ def bootstrap_rh(data, n_resamples=5000, ci=95, random_state=None, verbose=True)
 
     rh_samples = np.array(rh_samples)
 
-    std_rh = np.std(rh_samples)
+    std_rh = np.std(rh_samples)[0]
     alpha = 100 - ci
     lower = np.percentile(rh_samples, alpha / 2)
     upper = np.percentile(rh_samples, 100 - alpha / 2)
 
-    return {
-        'rh_mean': np.mean(rh_samples),
-        'rh_std': std_rh,
-        'rh_ci': (lower, upper),
-        'rh_samples': rh_samples
-    }
+    return std_rh,
+        #'rh_mean': np.mean(rh_samples),
+        
+        #'rh_ci': (lower, upper),
+        #'rh_samples': rh_samples
+
+def relaxation_time(df):
+    """
+    t_relax = (8.9*10**5*(N*rh**3)**0.5)/(m**0.5*log(0.4*N))
+    N = number of members
+    m = mean stellar mass
+    rh =  half-mass radius
     
+    """
+    aux = df.copy(deep=True)
+    cte = 8.9*10**5
+    rh = unp.uarray(aux['rh'], aux['e_rh'])
+    N = aux['n_members']
+    m = unp.uarray(aux['mass_total'], aux['e_mass_total'])/N
+    
+    t_relax = (cte*(N*rh**3)**0.5)/(unp.log10(0.4*N)*m**0.5)
+    t_relax = t_relax/1e6 #Tempo de relaxamento em Myr
+    
+    aux['t_relax'] = unp.nominal_values(t_relax)
+    aux['e_t_relax'] = unp.std_devs(t_relax)
+
+    return aux
     
     

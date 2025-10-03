@@ -9,6 +9,10 @@ import numpy as np
 import pandas as pd
 from uncertainties import unumpy as unp
 from scipy.stats import bootstrap
+from scipy.stats import pearsonr
+from scipy.stats import ks_2samp
+from scipy.spatial import distance
+import statsmodels.api as sm
 
 from astropy.coordinates import SkyCoord
 import astropy.units as u
@@ -25,6 +29,35 @@ def bin_frac(data, q=0):
     binaries = len(data[data['q']>q])
     
     return binaries/len(data)
+
+def find_k_nearest_cluster(df, idx, k=5, av_lim=.5, dist_lim=1.5):
+    params = ['age', 'FeH', 'mass_total', 'n_members']
+    mask_ref = (df.Av < av_lim) & (df.dist < dist_lim) & (df.index != idx)
+    ref_sample = df[mask_ref]
+    dists = []
+
+    for cluster in ref_sample.index:
+        d = distance.euclidean(ref_sample.loc[cluster, params],
+                               df.loc[idx, params])
+        dists.append((d, cluster))
+
+    dists.sort(key=lambda x: x[0])
+    return dists[:k] 
+
+def sigma_fb(df, idx,q=0, k=5, av_lim=.5, dist_lim=1.5, alpha=2, eps=1e-6):
+    nearest = find_k_nearest_cluster(df, idx, k, av_lim, dist_lim)
+    if q==0:
+        col = 'bin_frac'
+    else:
+        col = 'bin_frac_'+ str(q)
+    fb_k = df.loc[idx, col]
+
+    dists = np.array([d for d, _ in nearest])
+    refs = np.array([df.loc[c, col] for _, c in nearest])
+    diffs = refs - fb_k
+
+    sigma = np.sqrt(np.sum(diffs**2) /k)
+    return sigma
 
 def n_members(data):
     return len(data) + len(data[data['comp_mass']>0])
@@ -144,6 +177,9 @@ def stellar_density(data):
     n_stars = data['n_members']
     return n_stars/V
     
+
+
+
 
 
     

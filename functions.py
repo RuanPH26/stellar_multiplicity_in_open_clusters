@@ -62,13 +62,13 @@ def sigma_fb(df, idx,q=0, k=5, av_lim=.5, dist_lim=1.5, alpha=2, eps=1e-6):
 def n_members(data):
     return len(data) + len(data[data['comp_mass']>0])
 
-def half_mass_ratio(data):
+def half_mass_ratio(data, dist):
     
     aux = data.copy(deep=True)
     #Converter coordenadas astronômicas em coordenadas tridimensionais, x,y,z
     coords = SkyCoord(ra=aux['RA_ICRS'].values * u.degree,
                       dec=aux['DE_ICRS'].values * u.degree,
-                      distance=aux['dist'].values * u.pc*1000,
+                      distance= dist * u.pc*1000,
                       frame='icrs')
 
     cartesian = coords.cartesian
@@ -101,7 +101,9 @@ def half_mass_ratio(data):
     #calcula o raio normalizado r/rh
     aux['r/rh'] = aux['r']/rh
     
-    return aux, rh
+    e_rh = bootstrap_rh(aux)
+    
+    return aux, rh, e_rh
 
 
 
@@ -166,16 +168,19 @@ def relaxation_time(df):
     t_relax = (cte*(N*rh**3)**0.5)/(unp.log10(0.4*N)*m**0.5)
     t_relax = t_relax/1e6 #Tempo de relaxamento em Myr
     
-    aux['t_relax'] = unp.nominal_values(t_relax)
-    aux['e_t_relax'] = unp.std_devs(t_relax)
+    e_t_relax = unp.std_devs(t_relax)
+    t_relax = unp.nominal_values(t_relax)
+    
 
-    return aux
+    return t_relax, e_t_relax
 
 def stellar_density(data):
-    r = data['rh']
+    r = unp.uarray(data['rh'], data['e_rh'])
     V = (4/3)*np.pi*r**3
     n_stars = data['n_members']
-    return n_stars/V
+    density = n_stars/V
+    
+    return unp.nominal_values(density), unp.std_devs(density)
     
 
 

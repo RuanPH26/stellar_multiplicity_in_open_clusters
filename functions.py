@@ -101,18 +101,17 @@ def half_mass_ratio(data, dist):
     #calcula o raio normalizado r/rh
     aux['r/rh'] = aux['r']/rh
     
-    e_rh = bootstrap_rh(aux)
     
-    return aux, rh, e_rh
+    return aux, rh
 
 
 
 #Função para estimar o erro de rh via bootstrap
-def get_rh(sample):
-    _, rh = half_mass_ratio(sample)
+def get_rh(sample, dist):
+    _, rh, = half_mass_ratio(sample, dist)
     return rh
 
-def bootstrap_rh(data, n_resamples=5000, ci=95, random_state=None, verbose=False):
+def bootstrap_rh(data, dist, n_resamples=1000, ci=95, random_state=None, verbose=False):
     rng = np.random.default_rng(seed=random_state)
     n = len(data)
     rh_samples = []
@@ -123,7 +122,7 @@ def bootstrap_rh(data, n_resamples=5000, ci=95, random_state=None, verbose=False
         sample = data.iloc[sample_idx].reset_index(drop=True)
 
         try:
-            rh = get_rh(sample)
+            rh = get_rh(sample, dist)
             rh_samples.append(rh)
         except Exception as e:
             errors += 1
@@ -140,11 +139,10 @@ def bootstrap_rh(data, n_resamples=5000, ci=95, random_state=None, verbose=False
 
     rh_samples = np.array(rh_samples)
 
-    std_rh = np.std(rh_samples)[0]
+    std_rh = np.std(rh_samples)
     alpha = 100 - ci
     lower = np.percentile(rh_samples, alpha / 2)
     upper = np.percentile(rh_samples, 100 - alpha / 2)
-
     return std_rh,
         #'rh_mean': np.mean(rh_samples),
         

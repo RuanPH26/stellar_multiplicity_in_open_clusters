@@ -172,8 +172,8 @@ def relaxation_time(df):
 
     return t_relax, e_t_relax
 
-def stellar_density(data):
-    r = unp.uarray(data['rh'], data['e_rh'])
+def stellar_density(data, radius_col):
+    r = unp.uarray(data[radius_col], data['e_'+radius_col])
     V = (4/3)*np.pi*r**3
     n_stars = data['n_members']
     density = n_stars/V

@@ -179,8 +179,26 @@ def stellar_density(data, radius_col):
     density = n_stars/V
     
     return unp.nominal_values(density), unp.std_devs(density)
-    
+   
+def format_erro(valor, erro):
+    return f"{valor:.2f} ± {erro:.2f}" 
 
+def save_results(df):
+        
+    df = df.round(2)
+    
+    tabela_formatada = pd.DataFrame({
+        'f_bin': df.apply(lambda x: format_erro(x['bin_frac'], x['e_bin_frac']), axis=1),
+        'f_bin_0.5': df.apply(lambda x: format_erro(x['bin_frac_0.5'], x['e_bin_frac_0.5']), axis=1),
+        'r_h': df.apply(lambda x: format_erro(x['rh'], x['e_rh']), axis=1),
+        't_relax (Myr)': df.apply(lambda x: format_erro(x['t_relax'], x['e_t_relax']), axis=1),
+        'τ': df.apply(lambda x: format_erro(x['tau'], x['e_tau']), axis=1)
+    })
+    
+    # Exporta para LaTeX
+    tabela_latex = tabela_formatada.to_latex(index=True, escape=False)
+    with open("tabela_resultados.tex", "w", encoding="utf-8") as f:
+        f.write(tabela_latex)
 
 
 

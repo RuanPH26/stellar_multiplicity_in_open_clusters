@@ -102,7 +102,7 @@ def half_mass_ratio(data, dist):
     aux['r/rh'] = aux['r']/rh
     
     
-    return aux, rh
+    return aux['r/rh'], rh
 
 
 

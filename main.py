@@ -10,7 +10,7 @@ import os
 #Caminho para dados dos aglomerados
 path = './Aglomerados/'
 
-run =True
+run =False
 if run:
     
     df = pd.read_csv('Dados/results.csv', index_col='Cluster')

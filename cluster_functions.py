@@ -12,7 +12,7 @@ from scipy.stats import bootstrap
 from scipy.stats import pearsonr
 from scipy.stats import ks_2samp
 from scipy.spatial import distance
-import statsmodels.api as sm
+
 
 from astropy.coordinates import SkyCoord
 import astropy.units as u
@@ -32,9 +32,23 @@ def bin_frac(data, q=0):
 
 
 def find_k_nearest_cluster(df, idx, k=5, av_lim=.5, dist_lim=1.5):
+    """
+    Função que encontra os k aglomerados mais próximos em idade, metalicidade, massa total e quantidade de membros, dentro de uma subamostra de
+    aglomerados com distâncias e avermelhamentos baixos.
+    
+    A função recebe os seguintes parâmetros:
+    df -> dataframe com as propriedades de todos os aglomerados
+    idx -> indice do aglomerado que queremos encontrar seus semelhantes
+    k -> número dos aglomerados mais próximos que a função vai retornar
+    av_lim -> avermelhamento máximo considerado para a subamostra de referencia
+    dist_lim -> distância máxima considerada para a subamostra de referência
+
+    E retorna os indices e as distâncias dos k-aglomerados mais próximos
+    """
+    
     params = ['age', 'FeH', 'mass_total', 'n_members']
     mask_ref = (df.Av < av_lim) & (df.dist < dist_lim) & (df.index != idx)
-    ref_sample = df[mask_ref]
+    ref_sample = df[mask_ref]   
     dists = []
 
     for cluster in ref_sample.index:
@@ -44,6 +58,32 @@ def find_k_nearest_cluster(df, idx, k=5, av_lim=.5, dist_lim=1.5):
 
     dists.sort(key=lambda x: x[0])
     return dists[:k] 
+
+def corr_fb(df, idx, q=0, k=5, av_lim=.5, dist_lim=1.5,):
+    """
+    Retorna o valor corrigido de fb. O valor de fb corrigido considera a média ponderada dos k aglomerados mais próximos dentro da subamostra 
+    de referência. Os pesos são inversamente proporcionais as distâncias (no espaço dos parâmetros) entre o aglomerado analisado e seus k-aglomerados
+    semelhantes, dando maior peso aos que possuem uma distância menor.
+    """
+    nearest = find_k_nearest_cluster(df, idx, k, av_lim, dist_lim,) #Encontra os k semelhantes 
+
+    #O parâmetro q define se a correção vai ser feita na coluna bin_frac, que considera a fração de binárias total do aglomerado ou em uma coluna com
+    #bin_frac_q, que considera apenas binárias com razões de massa >= q
+    
+    if q==0:
+        col = 'bin_frac'
+    else:
+        
+        q_formatted = f"{int(round(q * 10)):02d}"
+        col = f'bin_frac_{q_formatted}'     
+        
+    fb_k = df.loc[idx, col]
+
+    dists = np.array([d for d, _ in nearest])
+    pesos = 1/dists
+    pesos = pesos/pesos.sum() #normaliza os pesos
+    fb_ref = np.array([df.loc[c, col] for _, c in nearest]) #obtem os valores de fb dos k-aglomerados semelhantes
+    return (fb_ref*pesos).sum()
 
 
 def get_probabilities(log_m2, mask_m1, mask_m2):
@@ -293,8 +333,8 @@ def save_results(df):
     df = df.round(2)
     
     tabela_formatada = pd.DataFrame({
-        'f_bin': df.apply(lambda x: format_erro(x['bin_frac'], x['e_bin_frac']), axis=1),
-        'f_bin_0.5': df.apply(lambda x: format_erro(x['bin_frac_0.5'], x['e_bin_frac_0.5']), axis=1),
+        'f_bin': df.apply(lambda x: format_erro(x['bin_frac_corr'], x['e_bin_frac']), axis=1),
+        'f_bin_0.5': df.apply(lambda x: format_erro(x['bin_frac_05_corr'], x['e_bin_frac_05']), axis=1),
         'r_h': df.apply(lambda x: format_erro(x['rh'], x['e_rh']), axis=1),
         't_relax (Myr)': df.apply(lambda x: format_erro(x['t_relax'], x['e_t_relax']), axis=1),
         'τ': df.apply(lambda x: format_erro(x['tau'], x['e_tau']), axis=1)

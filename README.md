@@ -1,5 +1,5 @@
 
-## Analysis of the binary fraction in 772 open clusters
+# Stellar multiplicity in open clusters: investigating binary fractions and their relationship with cluster properties
 
 This project investigates how fundamental properties of open clusters 
 (such as age, mass, and metallicity) influence the binary fraction.

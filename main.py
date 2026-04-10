@@ -5,7 +5,7 @@ Created on Sun Oct  5 00:13:06 2025
 @author: Ruan
 """
 
-from functions import *
+from cluster_functions import *
 import os
 #Caminho para dados dos aglomerados
 path = './Aglomerados/'
@@ -27,7 +27,7 @@ if run:
         dist= df.loc[cluster, 'dist']
     
         # Calcula rh e e_rh
-        data.loc[cluster], df.loc[cluster, 'rh'], = half_mass_ratio(data.loc[cluster], dist)
+        data.loc[cluster, 'r/rh'], df.loc[cluster, 'rh'], = half_mass_ratio(data.loc[cluster], dist)
         df.loc[cluster, 'e_rh'] = bootstrap_rh(data.loc[cluster], dist,)
         data.loc[cluster].to_csv(f"{path}{cluster}.csv", index=False) #Atualiza dados do aglomerados para incluir as posições dos sistemas
 

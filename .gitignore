@@ -5,3 +5,4 @@ __pycache__/
 *.npy, *.tex
 *.npy
 *.tex
+.virtual_documents/

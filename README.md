@@ -60,4 +60,4 @@ If you use this repository, please cite:
 Alves R. et al. (2026),
 *Stellar Multiplicity in Open Clusters*,
 Zenodo,
-https://doi.org/10.5281/zenodo.xxxxxx
+https://doi.org/10.5281/zenodo.20140202

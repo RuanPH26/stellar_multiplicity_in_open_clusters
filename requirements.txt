@@ -1,0 +1,5 @@
+astropy==7.2.0
+numpy==2.4.4
+pandas==3.0.3
+scipy==1.17.1
+uncertainties==3.2.3

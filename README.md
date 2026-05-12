@@ -4,7 +4,7 @@
 This project investigates how fundamental properties of open clusters 
 (such as age, mass, and metallicity) influence the binary fraction.
 
-The analysis is based on a sample of 772 open clusters using Gaia EDR3 data.
+The analysis is based on a sample of 773 open clusters using Gaia EDR3 data.
 
 The notebooks are structured as follows:
 

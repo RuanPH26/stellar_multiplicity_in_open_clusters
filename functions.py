@@ -99,6 +99,7 @@ def calcula_sigma_sys(df, data, col, cluster, n_bootstrap=1000, random_state=Non
     idx_single = df_cluster[df_cluster["flag_binary"] == 0].index
     bootstrap_fb = []
     N = calcula_N(df, data, col, cluster)
+    print(f'N={N}')
     
     for _ in range(n_bootstrap):
         aux = df_cluster.copy(deep=True)       
@@ -425,7 +426,10 @@ def lowess(x, y, f=1./3.):
         sigma2 = (np.sum((A.dot(sol) -y [order])**2)/N )
         # Calculate the standard error
         y_stderr[place] = np.sqrt(sigma2 *
-                                A[i].dot(np.linalg.inv(ATA)))
+                                A[i].dot(np.linalg.inv(ATA)
+                                                    ).dot(A[i]))
+    return y_sm, y_stderr
+
                              
 def loop_mass_ratio(log_m1, q, min_mass, max_mass, dm=0.05):
         
@@ -502,7 +506,7 @@ def loop_probabilities(log_m1, log_m2,min_mass, max_mass, dm=0.05):
 def statistical_test(sample_1, sample_2):
     # Kolmogorov–Smirnov test
     ks_test = stats.ks_2samp(sample_1, sample_2)
-    print(f"KS test: stat = {ks_test.statistic:.4f}, p = {ks_test.pvalue:.4f}")
+    print(f"KS test: stat = {ks_test.statistic:.4f}, p = {ks_test.pvalue:.2e}")
     if ks_test.pvalue<0.05:
         print('Distribuições distintas\n')
     else:
@@ -510,7 +514,7 @@ def statistical_test(sample_1, sample_2):
         
     # Mann–Whitney U test    
     mw_test = stats.mannwhitneyu(sample_1, sample_2, alternative='two-sided')
-    print(f"Mann–Whitney U test: U = {mw_test.statistic:.4f}, p = {mw_test.pvalue:.4f}")
+    print(f"Mann–Whitney U test: U = {mw_test.statistic:.4f}, p = {mw_test.pvalue:.4e}")
     
     if mw_test.pvalue<0.05:
         print('Distribuições distintas\n')
@@ -519,10 +523,15 @@ def statistical_test(sample_1, sample_2):
     
     # Anderson–Darling test  
     AD_test = stats.anderson_ksamp([sample_1, sample_2])
-    print(f"Anderson–Darling test: stat = {AD_test.statistic:.4f}, p = {AD_test.pvalue:.4f}")
+    print(f"Anderson–Darling test: stat = {AD_test.statistic:.4f}, p = {AD_test.pvalue:.4e}")
     if AD_test.pvalue < 0.05: 
         print('Distribuições distintas\n')
     else:
         print('Não há evidência de que são diferentes\n')
+
+def cliffs_delta(x, y):
+    nx = len(x)
+    ny = len(y)
+    return ((np.sum(x[:, None] > y) - np.sum(x[:, None] < y)) / (nx * ny)).round(2)
 
     

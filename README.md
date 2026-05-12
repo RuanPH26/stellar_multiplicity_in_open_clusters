@@ -8,12 +8,14 @@ The analysis is based on a sample of 773 open clusters using Gaia EDR3 data.
 
 The notebooks are structured as follows:
 
-[data_description.ipynb](data_description.ipynb): Overview of the dataset, including the main properties of the open clusters used in this study.
+[data_description.ipynb](Notebooks/data_description.ipynb): Overview of the dataset, including the main properties of the open clusters used in this study.
 
-[sample_correction.ipynb](sample_correction.ipynb): Methods and tests applied to correct the estimated binary fractions.
+[sample_correction.ipynb](Notebooks/sample_correction.ipynb): Methods and tests applied to correct the estimated binary fractions.
 
-[Analysis.ipynb](Analysis.ipynb): This notebook contains the main analyses performed on the properties of open clusters and their binary fraction. 
+[sample_correction.ipynb](Notebooks/selection_effect.ipynb): It shows how the result is affected if we adopt different selection criteria for binary systems.
 
-[stellar_mass_analysis.ipynb](stelar_mass.ipynb): Analysis of the behavior of stars with different masses in the occurrence of binary systems.
+[Analysis.ipynb](Notebooks/Analysis.ipynb): This notebook contains the main analyses performed on the properties of open clusters and their binary fraction. 
 
-[comparison.ipynb](comparasion.ipynb): Comparison of our results with some studies in the literature.
+[stellar_mass_analysis.ipynb](Notebooks/stelar_mass.ipynb): Analysis of the behavior of stars with different masses in the occurrence of binary systems.
+
+[comparison.ipynb](Notebooks/comparasion.ipynb): Comparison of our results with some studies in the literature.

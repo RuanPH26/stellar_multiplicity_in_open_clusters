@@ -1,6 +1,8 @@
 
 # Stellar multiplicity in open clusters: investigating binary fractions and their relationship with cluster properties
 
+DOI: https://doi.org/10.5281/zenodo.20140202
+
 This project investigates how fundamental properties of open clusters 
 (such as age, mass, and metallicity) influence the binary fraction.
 
@@ -42,5 +44,20 @@ Run:
 
 ```bash
 python scripts/main.py
+```
+## License
 
-https://doi.org/10.5281/zenodo.20140202
+This project is licensed under the MIT License.
+
+## Data Availability
+
+All data products and analysis scripts used in this work are available in this repository and archived on Zenodo.
+
+## Citation
+
+If you use this repository, please cite:
+
+Alves R. et al. (2026),
+*Stellar Multiplicity in Open Clusters*,
+Zenodo,
+https://doi.org/10.5281/zenodo.xxxxxx

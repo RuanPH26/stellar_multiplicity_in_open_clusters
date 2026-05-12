@@ -1,8 +1,17 @@
 cff-version: 1.2.0
 title: Stellar Multiplicity in Open Clusters
-authors: Alves R., Monteiro H., Dias W., Hickel G. 
+authors:
   - family-names: "Alves"
-    given-names: "Ruan Philipe"
+    given-names: "Ruan"
+
+  - family-names: "Monteiro"
+    given-names: "Hektor"
+
+  - family-names: "Dias"
+    given-names: "Wilton"
+
+  - family-names: "Hickel"
+    given-names: "Gabriel"
 doi: 10.5281/zenodo.20140202
 version: 1.0
 date-released: 2026-05-12

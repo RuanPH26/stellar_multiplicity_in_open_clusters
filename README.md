@@ -19,3 +19,21 @@ The notebooks are structured as follows:
 [stellar_mass_analysis.ipynb](Notebooks/stelar_mass.ipynb): Analysis of the behavior of stars with different masses in the occurrence of binary systems.
 
 [comparison.ipynb](Notebooks/comparasion.ipynb): Comparison of our results with some studies in the literature.
+
+## Requirements
+
+Python 3.11
+
+Packages:
+- numpy
+- pandas
+- astropy
+- matplotlib
+- scipy
+
+## Reproducibility
+
+Run:
+
+```bash
+python scripts/main.py

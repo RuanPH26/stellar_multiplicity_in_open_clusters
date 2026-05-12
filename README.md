@@ -12,7 +12,7 @@ The notebooks are structured as follows:
 
 [sample_correction.ipynb](Notebooks/sample_correction.ipynb): Methods and tests applied to correct the estimated binary fractions.
 
-[sample_correction.ipynb](Notebooks/selection_effect.ipynb): It shows how the result is affected if we adopt different selection criteria for binary systems.
+[selection_effect.ipynb](Notebooks/selection_effect.ipynb): It shows how the result is affected if we adopt different selection criteria for binary systems.
 
 [Analysis.ipynb](Notebooks/Analysis.ipynb): This notebook contains the main analyses performed on the properties of open clusters and their binary fraction. 
 

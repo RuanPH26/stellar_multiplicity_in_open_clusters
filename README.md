@@ -25,10 +25,15 @@ The notebooks are structured as follows:
 Python 3.11
 
 Packages:
+
 astropy
+
 numpy
+
 pandas
+
 scipy
+
 uncertainties
 
 ## Reproducibility

@@ -42,3 +42,5 @@ Run:
 
 ```bash
 python scripts/main.py
+
+https://doi.org/10.5281/zenodo.20140202

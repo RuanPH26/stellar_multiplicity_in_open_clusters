@@ -88,6 +88,27 @@ def find_k_nearest_cluster(df, idx, k=5, av_lim=.5, dist_lim=1.5):
     
     return list(zip(closest_dists, closest_clusters))
 
+def corr_mean(df, q=0):
+    benchmark = df[(df['Av']<0.5) & (df['dist']<1.5)]
+    if q==0.5:
+        col = 'bin_frac_05'
+    else:
+        col = 'bin_frac'
+    mean_bf_bench = benchmark[col].mean()
+    bin_range = 0.5
+    Av = 0
+    while Av <= df['Av'].max():
+        mask = (df['Av']>= Av) & (df['Av']< Av+bin_range)
+        aux = df[mask]
+        if len(aux) > 0:
+            mean_bf_aux = aux[col].mean()
+            shift = mean_bf_aux - mean_bf_bench
+            df.loc[mask, col+'_corr'] = aux[col] - shift
+    
+        Av += bin_range
+    return df[col+'_corr']
+    
+
 def calcula_sigma_sys(df, data, col, cluster, n_bootstrap=1000, random_state=None):
     
     rng = np.random.default_rng(random_state)
@@ -394,7 +415,7 @@ def save_results(df):
     
     # Exporta para LaTeX
     tabela_latex = tabela_formatada.to_latex(index=True, escape=False)
-    with open("tabela_resultados.tex", "w", encoding="utf-8") as f:
+    with open("..\tabela_resultados.tex", "w", encoding="utf-8") as f:
         f.write(tabela_latex)
 
 def lowess(x, y, f=1./3.):

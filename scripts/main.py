@@ -14,9 +14,9 @@ import os
 if __name__ == "__main__":
     
     # Setup paths
-    path = 'membership_data_edr3/'
-    output_path = 'results/'
-    cluster_data = pd.read_csv('Data/log-results-eDR3-MF_integrada.csv', 
+    path = '../data/membership_data_edr3/'
+    output_path = '../results/'
+    cluster_data = pd.read_csv('../data/log-results-eDR3-MF_integrada.csv', 
                                sep = ';', index_col='Cluster')
     
     list_data = []
@@ -46,9 +46,9 @@ if __name__ == "__main__":
         data_final = pd.DataFrame() 
         
     
-    os.makedirs('results', exist_ok=True)
-    data_final.to_csv('results/data.csv', index=False)
-    cluster_data.to_csv('results/results.csv', index=True)
+    os.makedirs('../results', exist_ok=True)
+    data_final.to_csv('../results/data.csv', index=False)
+    cluster_data.to_csv('../results/results.csv', index=True)
             
     
     # Toggle execution
@@ -56,15 +56,17 @@ if __name__ == "__main__":
     
     if RUN:
         
-        df = pd.read_csv('results/results.csv', index_col='Cluster')
-        data = pd.read_csv('results/data.csv', index_col='Cluster')
+        df = pd.read_csv('../results/results.csv', index_col='Cluster')
+        data = pd.read_csv('../results/data.csv', index_col='Cluster')
         aux = data.copy()
         mask = ((aux['er_comp_mass']/aux['comp_mass'])<0.5) | (aux['comp_mass']==0)
         aux = aux[mask]
         
         i=1
+        total = len(df.index)
+        print('############### Running code ######################')
         for cluster in df.index:
-            
+            print(f'Cluster {i}/{total}')
 
             
             dist= df.loc[cluster, 'dist']
@@ -81,17 +83,15 @@ if __name__ == "__main__":
             df.loc[cluster, 'bin_frac'] = bin_frac(aux.loc[cluster])
                                        
             df.loc[cluster, 'bin_frac_05'] = bin_frac(aux.loc[cluster], q = 0.5)
+            i+=1
             
-
+        
+        df['bin_frac_corr'] = corr_mean(df)
+        df['bin_frac_05_corr'] = corr_mean(df, q=0.5)
+        
         for cluster in df.index:
-            
-
-            
-            df.loc[cluster, 'bin_frac_corr'] = corr_fb_by_similarity(df, 'bin_frac', cluster, k=5, av_lim=.5, dist_lim=1.5,)
             df.loc[cluster, 'er_bin_frac'] = calcula_er_fb(df, aux.loc[cluster], 'bin_frac', cluster, q=0)
-            
-            df.loc[cluster, 'bin_frac_05_corr'] = corr_fb_by_similarity(df, 'bin_frac_05', cluster,  k=5, av_lim=.5, dist_lim=1.5,)
-            df.loc[cluster, 'er_bin_frac_05'] = calcula_er_fb(df, aux.loc[cluster], 'bin_frac_05', cluster, q = 0.5)
+            df.loc[cluster, 'er_bin_frac_05'] = calcula_er_fb(df, aux.loc[cluster], 'bin_frac_05', cluster, q=0.5)
             
             
         # Calcula tau
@@ -115,5 +115,6 @@ if __name__ == "__main__":
         np.save(output_path+'new_masses.npy', new_masses)
         np.save(output_path+'new_comp_masses.npy', new_comp_masses)
         
+        save_results(df)
         
         
